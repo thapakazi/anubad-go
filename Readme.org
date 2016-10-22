@@ -1,0 +1,14 @@
+#+TITLE: This is a making of api.anubad.com
+#+DATE: Saturday, Oct 22 2016
+#+DESCRIPTION: behind the scene stuffs, 1st version of docs
+
+* Motivation
+#+BEGIN_QUOTE
+anubad-go: a api written to expose anubad via api web
+#+END_QUOTE
+* Behind the scene stuffs 😄
+** technologies used:
+  | lang    | golang       |
+  | db      | sqlite       |
+  | default | json-gossips |
+
