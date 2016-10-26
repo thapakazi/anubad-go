@@ -8,7 +8,7 @@ anubad-go: a api written to expose anubad via api web
 #+END_QUOTE
 * Behind the scene stuffs 😄
 ** technologies used:
-  | lang    | golang       |
-  | db      | sqlite       |
-  | default | json-gossips |
+  | lang    | golang           |
+  | db      | mongodb +sqlite+ |
+  | default | json-gossips     |
 
