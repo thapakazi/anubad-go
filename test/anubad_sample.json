@@ -1,0 +1,75 @@
+    {
+        "word": "apple",
+        "spell": "एप्पल",
+        "meaning": {
+            "noun": "स्याउ"
+        },
+        "sci": "Malus sylrestris",
+        "tags": [
+            "fruit"
+        ]
+    }
+    {
+        "word": "apricot",
+        "spell": "ऐप्रिकाट",
+        "meaning": {
+            "noun": "खुर्पानी, अञ्‍जीर"
+        },
+        "sci": "Prunus armenica L",
+        "tags": [
+            "fruit"
+        ]
+    }
+    {
+        "word": "angry",
+        "meaning": {
+            "adj": "क्रूद्ध, आक्रोशित",
+            "verb": "क्रोध, रिस, रिसाउनु"
+        },
+        "tags": [
+            "emotion"
+        ]
+    }
+{
+    "word": "anniversary",
+    "meaning": {
+        "noun": "वार्षिकी,जयन्ती, वार्षिकोत्सव"
+    },
+    "spell": "एनिभर्सरि",
+    "tags": [
+        "time"
+    ]
+}
+
+{
+    "word": "announce",
+    "meaning": {
+        "noun": "विज्ञापन",
+        "verb": "घोषणा, सार्वजनिक गर्नु, प्रकट गर्नु, प्रकाशित गर्नु, उद्घोषण"
+    },
+    "spell": "अनाउन्स",
+    "tags": [ ]
+}
+{
+    "word": "application",
+    "meaning": {
+        "noun": "अनुप्रयोग",
+        "unknown": "निबेदन, उपयोग. आवेदन, अर्जी"
+    },
+    "spell": "",
+    "tags": [ ]
+}
+{
+    "word": "aquatic",
+    "meaning": {
+        "noun": "<animal> जलजन्तु, जलचर",
+        "noun": "<plant> पानीको वृक्ष",
+        "adj": "पानीको, जलसम्बन्धिय"
+    },
+    "spell": "अक्वाटिक",
+    "tags": [
+        "biology"
+    ]
+    
+}
+
