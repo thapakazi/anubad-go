@@ -15,11 +15,10 @@ import (
 )
 
 type Anubad struct {
+	ID      bson.ObjectId          `bson:"_id,omitempty" json:"_id"`
 	Word    string                 `json:"word"`
 	Meaning map[string]interface{} `json:"meaning"`
-	Sci     string                 `json:"scientifc_name"`
-	Tags    []string               `json:"tags"`
-	Spell   string                 `json:"spell"`
+	Extra   bson.M                 `bson:",inline" json:"extra"`
 }
 
 func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
@@ -47,9 +46,41 @@ func main() {
 	mux := goji.NewMux()
 	mux.HandleFuncC(pat.Get("/sabdaharu"), allAnubads(session))
 	mux.HandleFuncC(pat.Get("/sabda/:word"), sabdakhoj(session))
+	mux.HandleFuncC(pat.Post("/sabdaharu"), addSabda(session))
 	http.ListenAndServe("localhost:2048", mux)
 
 }
+func addSabda(s *mgo.Session) goji.HandlerFunc {
+	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+		session := s.Copy()
+		defer session.Close()
+
+		var anubad Anubad
+
+		//first read the body of request with a json decoder
+		decoder := json.NewDecoder(r.Body)
+		// then we decode what inside into a struct instance
+		if err := decoder.Decode(&anubad); err != nil {
+			ErrorWithJSON(w, "Incorrect body", http.StatusBadRequest)
+			return
+		}
+
+		//else we put data into the db
+		c := session.DB("anubad").C("sabda")
+		if err := c.Insert(anubad); err != nil {
+			if mgo.IsDup(err) {
+				ErrorWithJSON(w, "duplicate entry, may be record already present in db", http.StatusBadRequest)
+				return
+			}
+			ErrorWithJSON(w, "database error", http.StatusBadRequest)
+			log.Println("Failed to insert new entry", err)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Location", r.URL.Path+"/"+anubad.Word)
+		w.WriteHeader(http.StatusCreated)
+	}
+}
+
 func allAnubads(s *mgo.Session) goji.HandlerFunc {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
@@ -96,7 +127,7 @@ func sabdakhoj(s *mgo.Session) goji.HandlerFunc {
 			ErrorWithJSON(w, "Word not found", http.StatusNotFound)
 			return
 		}
-
+		fmt.Println(anubad)
 		respBody, err := json.MarshalIndent(anubad, "", "  ")
 		if err != nil {
 			log.Fatal(err)
@@ -105,3 +136,12 @@ func sabdakhoj(s *mgo.Session) goji.HandlerFunc {
 		ResponseWithJSON(w, respBody, http.StatusOK)
 	}
 }
+
+// func ensureIndex(s *session) goji.HandlerFunc {
+// 	return func(ctx context.Cntext, w http.ResponseWriter, r *http.Request) {
+// 		session := s.Copy()
+// 		defer session.Close()
+// 		c := session.DB("anubad").C("sabda")
+
+// 	}
+// }

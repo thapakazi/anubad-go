@@ -11,4 +11,18 @@ anubad-go: a api written to expose anubad via api web
   | lang    | golang           |
   | db      | mongodb +sqlite+ |
   | default | json-gossips     |
-
+* Test Examples
+** Add new sabda
+   There is a sample file: ~test/angry.json~ 
+   #+BEGIN_SRC bash
+   curl -X POST -H "Content-Type: application/json" -d @test/angry.json http:
+//localhost:2048/sabdaharu
+   #+END_SRC
+** get all sabda
+   #+BEGIN_SRC bash
+   curl http://localhost:2048/sabdaharu
+   #+END_SRC
+** search for a sabda
+   #+BEGIN_SRC bash
+   curl http://localhost:2048/sabda/angry
+   #+END_SRC
