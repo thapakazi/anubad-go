@@ -1,10 +1,9 @@
 export JSON_DATA_TO_IMPORT_FROM=./test/anubad_sample.json
 export DBPATH=./test/db
 export DBNAME=anubad
-export COLNAME=sabda
-
+export COLNAME=sabdakosh
 all:
-	@go run main.go
+	@go run main.go handlers.go sabda.go
 
 start_mongo_first:
 	mkdir -p ${DBPATH}
@@ -16,3 +15,6 @@ import: start_mongo_first
 clean: start_mongo_first
 	@mongo -eval "db.${COLNAME}.drop()" ${DBNAME}
 	# rm -rf ${DBPATH}
+
+single:
+	go run sabda.go
