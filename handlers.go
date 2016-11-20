@@ -10,6 +10,7 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 )
 
@@ -40,13 +41,8 @@ import (
 
 func getSabda(w http.ResponseWriter, r *http.Request) {
 
-	session, err := mgo.Dial("localhost")
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
-
+	// lets get the context first
+	session := context.Get(r, "sessionCopy").(*mgo.Session)
 	c := session.DB(os.Getenv("DBNAME")).C(os.Getenv("COLNAME"))
 
 	// mux.Vars gets a map of path variables by name. here "name" matches the {name} path
@@ -59,7 +55,7 @@ func getSabda(w http.ResponseWriter, r *http.Request) {
 
 	var sabda Sabdakosh
 
-	err = c.Find(bson.M{"w": word}).One(&sabda)
+	err := c.Find(bson.M{"w": word}).One(&sabda)
 	fmt.Printf("%+v", sabda)
 	if err != nil {
 		ErrorWithJSON(w, "Database error", http.StatusInternalServerError)
@@ -79,8 +75,6 @@ func getSabda(w http.ResponseWriter, r *http.Request) {
 
 // func addSabda(s *mgo.Session) goji.HandlerFunc {
 // 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-// 		session := s.Copy()
-// 		defer session.Close()
 
 // 		var sabda Sabdakosh
 

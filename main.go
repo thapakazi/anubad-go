@@ -20,6 +20,12 @@ func ResponseWithJSON(w http.ResponseWriter, json []byte, code int) {
 	w.Write(json)
 }
 func main() {
+
+	// lets define our mgo server first
+	srv, err := NewServer()
+	if err != nil {
+		log.Fatal(err)
+	}
 	// creates a new top level mux.Router. since a mux.Router implements the http.Handler interface,
 	// we can pass it to http.ListenAndServe below
 	router := mux.NewRouter()
@@ -34,7 +40,8 @@ func main() {
 	// group similar functionality together. this subrouter also verifies that the Content-Type
 	// header is correct for a JSON API.
 	apiRouter := router.Headers("Content-Type", "application/json").Subrouter()
-	apiRouter.HandleFunc("/api/sabda/{word}", getSabda).Methods("GET")
+	apiRouter.HandleFunc("/api/sabda/{word}", srv.WithData(getSabda)).Methods("GET")
+	// apiRouter.HandleFunc("/api/sabdas", getSabda).Methods("GET")
 	// apiRouter.HandleFunc("/api/{name}", reserveServer).Methods("POST")
 	// apiRouter.HandleFunc("/api/{name}", releaseServer).Methods("DELETE")
 	log.Printf("serving on port http://localhost:2048")
