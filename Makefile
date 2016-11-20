@@ -5,7 +5,7 @@ export DBNAME=anubad
 export COLNAME=sabdakosh
 
 all:
-	@go run main.go handlers.go sabda.go mgo_wrapper.go
+	@go run main.go handlers.go sabda.go mgo_wrapper.go response_json.go
 
 start_mongo_first:
 	mkdir -p ${DBPATH}

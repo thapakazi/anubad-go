@@ -8,17 +8,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(code)
-	fmt.Fprintf(w, "{message: %q}", message)
-}
-
-func ResponseWithJSON(w http.ResponseWriter, json []byte, code int) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(code)
-	w.Write(json)
-}
 func main() {
 
 	// lets define our mgo server first
@@ -41,9 +30,7 @@ func main() {
 	// header is correct for a JSON API.
 	apiRouter := router.Headers("Content-Type", "application/json").Subrouter()
 	apiRouter.HandleFunc("/api/sabda/{word}", srv.WithData(getSabda)).Methods("GET")
-	// apiRouter.HandleFunc("/api/sabdas", getSabda).Methods("GET")
-	// apiRouter.HandleFunc("/api/{name}", reserveServer).Methods("POST")
-	// apiRouter.HandleFunc("/api/{name}", releaseServer).Methods("DELETE")
+	apiRouter.HandleFunc("/api/sabdas", srv.WithData(getAllSabda)).Methods("GET")
 	log.Printf("serving on port http://localhost:2048")
 	http.ListenAndServe("localhost:2048", router)
 

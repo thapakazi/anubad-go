@@ -14,30 +14,27 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// func allAnubads(s *mgo.Session) goji.HandlerFunc {
-// 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func getAllSabda(w http.ResponseWriter, r *http.Request) {
+	session := context.Get(r, "sessionCopy").(*mgo.Session)
 
-// 		session := s.Copy()
-// 		defer session.Close()
+	c := session.DB(os.Getenv("DBNAME")).C(os.Getenv("COLNAME"))
+	var sabdas []Sabdakosh
 
-// 		c := session.DB(os.Getenv("DBNAME")).C(os.Getenv("COLNAME"))
-// 		var sabdas []Sabdakosh
+	err := c.Find(bson.M{}).All(&sabdas)
+	// 		fmt.Printf("%+v", sabdas)
+	if err != nil {
+		ErrorWithJSON(w, "Database error", http.StatusInternalServerError)
+		log.Println("Failed get all sabdas: ", err)
+		return
+	}
 
-// 		err := c.Find(bson.M{}).All(&sabdas)
-// 		fmt.Printf("%+v", sabdas)
-// 		if err != nil {
-// 			ErrorWithJSON(w, "Database error", http.StatusInternalServerError)
-// 			log.Println("Failed get all sabdas: ", err)
-// 			return
-// 		}
+	respBody, err := json.MarshalIndent(sabdas, "", "  ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	ResponseWithJSON(w, respBody, http.StatusOK)
 
-// 		respBody, err := json.MarshalIndent(sabdas, "", "  ")
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 		ResponseWithJSON(w, respBody, http.StatusOK)
-// 	}
-// }
+}
 
 func getSabda(w http.ResponseWriter, r *http.Request) {
 
