@@ -28,9 +28,11 @@ func main() {
 	// create a subrouter just for standard API calls. subrouters are convenient ways to
 	// group similar functionality together. this subrouter also verifies that the Content-Type
 	// header is correct for a JSON API.
-	apiRouter := router.Headers("Content-Type", "application/json").Subrouter()
+	// apiRouter := router.Headers("Content-Type", "application/json").Subrouter()
+	apiRouter := router.Host("localhost").Subrouter()
 	apiRouter.HandleFunc("/api/sabda/{word}", srv.WithData(getSabda)).Methods("GET")
 	apiRouter.HandleFunc("/api/sabdas", srv.WithData(getAllSabda)).Methods("GET")
+	apiRouter.HandleFunc("/api/addsabda", srv.WithData(addSabda)).Methods("POST")
 	log.Printf("serving on port http://localhost:2048")
 	http.ListenAndServe("localhost:2048", router)
 

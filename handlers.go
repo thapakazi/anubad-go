@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -14,6 +15,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Get all sabda
+// GET /api/sabdas
 func getAllSabda(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, "sessionCopy").(*mgo.Session)
 
@@ -36,6 +39,8 @@ func getAllSabda(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// get single workd(sabda) like
+// GET /api/sabda/{word}
 func getSabda(w http.ResponseWriter, r *http.Request) {
 
 	// lets get the context first
@@ -70,31 +75,42 @@ func getSabda(w http.ResponseWriter, r *http.Request) {
 	// }
 }
 
-// func addSabda(s *mgo.Session) goji.HandlerFunc {
-// 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func addSabda(w http.ResponseWriter, r *http.Request) {
 
-// 		var sabda Sabdakosh
+	var sabda Sabdakosh
+	type MongoKosh struct {
+		sabda Sabdakosh     `bson:",inline," json:",inline,omitempty"`
+		ID    bson.ObjectId `bson:"_id,omitempty" json:"_id"`
+	}
 
-// 		//first read the body of request with a json decoder
-// 		decoder := json.NewDecoder(r.Body)
-// 		// then we decode what inside into a struct i.e, anubad
-// 		if err := decoder.Decode(&sabda); err != nil {
-// 			ErrorWithJSON(w, "Incorrect body", http.StatusBadRequest)
-// 			return
-// 		}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	log.Println(string(body))
 
-// 		//else we put data into the db
-// 		c := session.DB(os.Getenv("DBNAME")).C(os.Getenv("COLNAME"))
-// 		if err := c.Insert(sabda); err != nil {
-// 			if mgo.IsDup(err) {
-// 				ErrorWithJSON(w, "duplicate entry, may be record already present in db", http.StatusBadRequest)
-// 				return
-// 			}
-// 			ErrorWithJSON(w, "database error", http.StatusBadRequest)
-// 			log.Println("Failed to insert new entry", err)
-// 		}
-// 		w.Header().Set("Content-Type", "application/json")
-// 		w.Header().Set("Location", r.URL.Path+"/"+string(sabda.ID))
-// 		w.WriteHeader(http.StatusCreated)
-// 	}
-// }
+	//first read the body of request with a json decoder
+	decoder := json.NewDecoder(r.Body)
+	// fmt.Printf("%+v", decoder)
+	// fmt.Printf("%+v", r.Body)
+	// then we decode what inside into a struct i.e, anubad
+	if err := decoder.Decode(&sabda); err != nil {
+		ErrorWithJSON(w, "Incorrect body", http.StatusBadRequest)
+		return
+	}
+	msabda := MongoKosh{sabda: sabda}
+	session := context.Get(r, "sessionCopy").(*mgo.Session)
+	c := session.DB(os.Getenv("DBNAME")).C(os.Getenv("COLNAME"))
+	if err := c.Insert(sabda); err != nil {
+		if mgo.IsDup(err) {
+			ErrorWithJSON(w, "duplicate entry, may be record already present in db", http.StatusBadRequest)
+			return
+		}
+		ErrorWithJSON(w, "database error", http.StatusBadRequest)
+		log.Println("Failed to insert new entry", err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Location", r.URL.Path+"/"+string(msabda.ID))
+	w.WriteHeader(http.StatusCreated)
+
+}

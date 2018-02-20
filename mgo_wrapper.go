@@ -21,6 +21,7 @@ func NewServer() (*Server, error) {
 	session.SetMode(mgo.Monotonic, true)
 	return &Server{dbSession: session}, nil
 }
+
 func (s *Server) Close() {
 	s.dbSession.Close()
 }
